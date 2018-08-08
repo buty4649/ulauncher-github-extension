@@ -1,0 +1,38 @@
+{
+    "manifest_version": "1",
+    "api_version": "1",
+    "name": "GitHub extension",
+    "description": "GitHub extension",
+    "developer_name": "buty4649",
+    "icon": "images/icon.png",
+    "query_debounce": 1,
+    "preferences": [
+        {
+            "id": "github",
+            "type": "keyword",
+            "name": "GitHub",
+            "default_value": "gh"
+        },
+        {
+            "id": "github_token",
+            "type": "input",
+            "name": "Access token for GitHub"
+        },
+        {
+            "id": "ghe",
+            "type": "keyword",
+            "name": "GitHub Enterprise",
+            "default_value": "ghe"
+        },
+        {
+            "id": "ghe_token",
+            "type": "input",
+            "name": "Access token for GitHub Enterprise"
+        },
+        {
+            "id": "ghe_hostname",
+            "type": "input",
+            "name": "Hostname for GitHub Enterprise"
+        }
+    ]
+}
