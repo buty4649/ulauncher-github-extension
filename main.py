@@ -67,12 +67,15 @@ class KeywordQueryEventListener(EventListener):
 
         items = []
         argument = event.get_argument() or ""
-        arguments = argument.split(" ", 2)
-        command = arguments[0] if len(arguments) > 0 else ""
+        arguments = argument.split(" ", 1)
+        command = arguments[0]
+        query = arguments[1] if len(arguments) > 1 else ''
 
         if command == "my":
           my_pages = ["dashboard", "notifications", "issues", "pulls", "settings", "stars"]
           for page in my_pages:
+            if query != '' and re.search("^%s" % query, page) is None:
+              continue
             url  = "https://%s/%s" % (hostname, page)
             items.append(ExtensionResultItem(icon='images/repo.png',
                                               name=page,
