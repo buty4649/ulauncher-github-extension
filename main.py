@@ -33,6 +33,17 @@ query {
     result = self.client.execute(query)
     return result["search"]["nodes"]
 
+  def myname(self):
+    query = gql('''
+query {
+  viewer {
+    login
+  }
+}
+''' % query)
+    result = self.client.execute(query)
+    return result["viewer"]["login"]
+
 
 class GithubExtension(Extension):
 
@@ -55,19 +66,31 @@ class KeywordQueryEventListener(EventListener):
           gh = GithubQuery(url, extension.preferences["ghe_token"])
 
         items = []
-        query = event.get_argument() or ""
-        query += " in:name,org"
+        argument = event.get_argument() or ""
+        arguments = argument.split(" ", 2)
+        command = arguments[0] if len(arguments) > 0 else ""
 
-        repos = gh.repos(query)
-        for r in sorted(repos, key=lambda r:r["nameWithOwner"]):
-          name = r["nameWithOwner"]
-          desc = r["description"]
+        if command == "my":
+          my_pages = ["dashboard", "notifications", "issues", "pulls", "settings", "stars"]
+          for page in my_pages:
+            url  = "https://%s/%s" % (hostname, page)
+            items.append(ExtensionResultItem(icon='images/repo.png',
+                                              name=page,
+                                              description="Open %s page" % page,
+                                              on_enter=OpenUrlAction(url)))
+        else:
+          argument += " in:name,org"
 
-          url  = "https://%s/%s" % (hostname, name)
-          items.append(ExtensionResultItem(icon='images/repo.png',
-                                            name=name,
-                                            description=desc,
-                                            on_enter=OpenUrlAction(url)))
+          repos = gh.repos(argument)
+          for r in sorted(repos, key=lambda r:r["nameWithOwner"]):
+            name = r["nameWithOwner"]
+            desc = r["description"]
+
+            url  = "https://%s/%s" % (hostname, name)
+            items.append(ExtensionResultItem(icon='images/repo.png',
+                                              name=name,
+                                              description=desc,
+                                              on_enter=OpenUrlAction(url)))
 
         return RenderResultListAction(items)
 
